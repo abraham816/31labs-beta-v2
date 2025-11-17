@@ -1,19 +1,45 @@
+'use client';
 import React, { useState } from 'react';
 import { Hammer, Mail, Lock, Home, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Separator } from './ui/separator';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 
-export function LoginPage({ onBack, onBackHome, onLogin }) {
+export function LoginPage({ onBack, onBackHome }) {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onLogin(email || 'design@31labs.com', password);
+    setError('');
+    setLoading(true);
+
+    try {
+      if (isSignup) {
+        if (password !== confirmPassword) {
+          throw new Error('Passwo'use client';
+import React, { useState } from 'react';
+import { Hammer, Mai.signUp({ email, password });
+        if (error) throw error;
+        alert('Check your email to confirm your account!');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,6 +84,7 @@ export function LoginPage({ onBack, onBackHome, onLogin }) {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   className="pl-11 h-12 rounded-xl border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                  required
                 />
               </div>
             </div>
@@ -75,6 +102,7 @@ export function LoginPage({ onBack, onBackHome, onLogin }) {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="pl-11 h-12 rounded-xl border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                  required
                 />
               </div>
             </div>
@@ -93,10 +121,13 @@ export function LoginPage({ onBack, onBackHome, onLogin }) {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
                     className="pl-11 h-12 rounded-xl border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                    required
                   />
                 </div>
               </div>
             )}
+
+            {error && <p className="text-red-500 text-sm">{error}</p>}
 
             {!isSignup && (
               <div className="text-right">
@@ -111,9 +142,10 @@ export function LoginPage({ onBack, onBackHome, onLogin }) {
 
             <Button
               type="submit"
-              className="w-full h-12 bg-[#ff5436] hover:bg-[#ff5436]/90 text-white rounded-xl text-base"
+              disabled={loading}
+              className="w-full h-12 bg-[#ff5436] hover:bg-[#ff5436]/90 text-white rounded-xl text-base disabled:opacity-50"
             >
-              {isSignup ? 'Create Account' : 'Log In'}
+              {loading ? 'Loading...' : isSignup ? 'Create Account' : 'Log In'}
             </Button>
           </form>
 
