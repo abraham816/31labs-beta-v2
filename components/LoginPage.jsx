@@ -25,9 +25,9 @@ export function LoginPage({ onBack, onBackHome }) {
     try {
       if (isSignup) {
         if (password !== confirmPassword) {
-          throw new Error('Passwo'use client';
-import React, { useState } from 'react';
-import { Hammer, Mai.signUp({ email, password });
+          throw new Error('Passwords do not match');
+        }
+   'us  const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         alert('Check your email to confirm your account!');
       } else {
