@@ -34,7 +34,10 @@ export function AgentStudio({
   const [conversationStep, setConversationStep] = useState(0);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-
+const handleLogout = async () => {
+  await supabase.auth.signOut();
+  window.location.href = "/";
+};
   const isEmptyAgent =
     !agentData.brandName &&
     !agentData.heroHeader &&
@@ -338,7 +341,7 @@ export function AgentStudio({
 
             <div className="flex items-center gap-4">
               <h3 className="text-neutral-900 font-medium">Agent Studio</h3>
-              <button className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-200 transition-colors text-neutral-600 hover:text-neutral-900">
+              <button onClick={handleLogout} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-200 transition-colors text-neutral-600 hover:text-neutral-900">
                 <User className="w-5 h-5" />
               </button>
               <button
