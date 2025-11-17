@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 import {
   User,
   Home,
@@ -34,10 +35,12 @@ export function AgentStudio({
   const [conversationStep, setConversationStep] = useState(0);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-const handleLogout = async () => {
-  await supabase.auth.signOut();
-  window.location.href = "/";
-};
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
+
   const isEmptyAgent =
     !agentData.brandName &&
     !agentData.heroHeader &&
