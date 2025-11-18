@@ -1,14 +1,13 @@
 'use client';
 import React, { useState } from 'react';
-import { Hammer, Mail, Lock, Home, X } from 'lucide-react';
+import { Hammer, Mail, Lock, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Separator } from './ui/separator';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
-export function LoginPage({ onBack, onBackHome }) {
+export function LoginPage({ onBack }) {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -79,7 +78,7 @@ export function LoginPage({ onBack, onBackHome }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="pl-11 h-12 rounded-xl border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                  className="pl-11 h-12 rounded-xl bg-neutral-100 border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
                   required
                 />
               </div>
@@ -95,7 +94,7 @@ export function LoginPage({ onBack, onBackHome }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="pl-11 h-12 rounded-xl border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                  className="pl-11 h-12 rounded-xl bg-neutral-100 border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
                   required
                 />
               </div>
@@ -112,7 +111,7 @@ export function LoginPage({ onBack, onBackHome }) {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="pl-11 h-12 rounded-xl border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                    className="pl-11 h-12 rounded-xl bg-neutral-100 border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
                     required
                   />
                 </div>
@@ -146,13 +145,6 @@ export function LoginPage({ onBack, onBackHome }) {
               </button>
             </p>
           </div>
-
-          <Separator className="my-6" />
-
-          <Button onClick={onBackHome} variant="outline" className="w-full h-12 rounded-xl border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 transition-colors">
-            <Home className="w-4 h-4 mr-2" />
-            Back to Home
-          </Button>
         </div>
       </div>
     </div>
