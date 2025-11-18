@@ -653,7 +653,7 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 placeholder="https://example.com/image.jpg"
-                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] text-sm"
+                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] text-sm text-neutral-900 placeholder:text-neutral-400"
                 autoFocus
               />
             ) : editingField === "brandName" ? (
@@ -662,7 +662,7 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 placeholder="Enter brand name..."
-                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] text-sm"
+                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] text-sm text-neutral-900 placeholder:text-neutral-400"
                 autoFocus
               />
             ) : (
