@@ -71,7 +71,7 @@ export function LoginPage({ onBack }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="h-12 rounded-xl bg-neutral-100 border-neutral-200 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                className="h-12 rounded-xl bg-neutral-100 border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
                 required
               />
             </div>
@@ -84,7 +84,7 @@ export function LoginPage({ onBack }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="h-12 rounded-xl bg-neutral-100 border-neutral-200 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                className="h-12 rounded-xl bg-neutral-100 border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
                 required
               />
             </div>
@@ -98,7 +98,7 @@ export function LoginPage({ onBack }) {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="h-12 rounded-xl bg-neutral-100 border-neutral-200 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                  className="h-12 rounded-xl bg-neutral-100 border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
                   required
                 />
               </div>
