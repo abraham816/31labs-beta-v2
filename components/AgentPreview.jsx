@@ -673,7 +673,7 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
                   editingField === "heroHeader" ? "Enter hero header..." : "Enter subheader..."
                 }
                 rows={3}
-                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] resize-none text-sm text-neutral-900 placeholder:text-neutral-400"
+                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] resize-none text-sm !text-neutral-900 placeholder:text-neutral-400"
                 autoFocus
               />
             )}
