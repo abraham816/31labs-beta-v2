@@ -41,7 +41,7 @@ export default function Home() {
         <div className="w-full max-w-3xl">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-[#2a2a2a] rounded-2xl mb-6 shadow-lg">
-              <span className="text-4xl text-[rgb(255,54,23)]">⚡︎</span>
+              <span className="text-4xl text-[rgba(17, 14, 13, 1)]">⚡︎</span>
             </div>
             <h1 className="text-neutral-900 mb-3 text-4xl">Start Vibe Selling Today</h1>
             <p className="text-neutral-500 font-medium max-w-[75%] mx-auto text-[14px]">Build all-in-one brand agents that sell, provide customer support, book demos, post on social media and run ad campaigns — with just prompts.</p>

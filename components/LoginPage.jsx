@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Hammer, Mail, Lock, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -53,11 +53,6 @@ export function LoginPage({ onBack }) {
 
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="flex items-center justify-center w-16 h-16 bg-[#2a2a2a] rounded-2xl shadow-lg">
-              <Hammer className="w-8 h-8 text-[#ff5436]" />
-            </div>
-          </div>
           <h1 className="text-neutral-900 font-medium text-3xl mb-2">
             {isSignup ? 'Create Your Account' : 'Welcome Back'}
           </h1>
@@ -70,51 +65,42 @@ export function LoginPage({ onBack }) {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-neutral-700">Email Address</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="pl-11 h-12 rounded-xl bg-neutral-100 border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
-                  required
-                />
-              </div>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="h-12 rounded-xl bg-neutral-100 border-neutral-200 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                required
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-neutral-700">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="pl-11 h-12 rounded-xl bg-neutral-100 border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
-                  required
-                />
-              </div>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="h-12 rounded-xl bg-neutral-100 border-neutral-200 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                required
+              />
             </div>
 
             {isSignup && (
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-neutral-700">Confirm Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="pl-11 h-12 rounded-xl bg-neutral-100 border-neutral-200 focus:border-[#ff5436] focus:ring-[#ff5436]"
-                    required
-                  />
-                </div>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="h-12 rounded-xl bg-neutral-100 border-neutral-200 placeholder:text-neutral-400 focus:border-[#ff5436] focus:ring-[#ff5436]"
+                  required
+                />
               </div>
             )}
 
@@ -122,7 +108,7 @@ export function LoginPage({ onBack }) {
 
             {!isSignup && (
               <div className="text-right">
-                <button type="button" className="text-sm text-[#ff5436] hover:text-[#ff5436]/80 transition-colors">
+                <button type="button" className="text-sm text-neutral-500 hover:text-neutral-700 transition-colors">
                   Forgot password?
                 </button>
               </div>
