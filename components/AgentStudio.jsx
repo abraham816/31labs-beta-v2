@@ -24,10 +24,12 @@ import {
 } from "./ui/tooltip";
 
 export function AgentStudio({
+  initialChatHistory = [],
   agentData,
   onBack,
   onUpdateAgent,
 }) {
+  
   const [activeTab, setActiveTab] = useState("home");
   const [editPrompt, setEditPrompt] = useState("");
   const [conversationStep, setConversationStep] = useState(0);
@@ -54,6 +56,7 @@ export function AgentStudio({
     );
 
   const [chatMessages, setChatMessages] = useState(
+    initialChatHistory.length > 0 ? initialChatHistory :
     isEmptyAgent
       ? [
           {
@@ -271,8 +274,10 @@ export function AgentStudio({
       timestamp: new Date(),
     };
 
-    setChatMessages([...chatMessages, userMessage, aiMessage]);
-    setEditPrompt("");
+    const newMessages = [...chatMessages, userMessage, aiMessage];
+setChatMessages(newMessages);
+onUpdateAgent(updates, newMessages);
+setEditPrompt("");
   };
 
   const handleKeyPress = (e) => {
