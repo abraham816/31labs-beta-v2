@@ -1,38 +1,43 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
-import AgentStudio from "@/components/AgentStudio";
+import { AgentStudio } from "@/components/AgentStudio";
+import { supabase } from '@/lib/supabase';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const [agentData, setAgentData] = useState({
     brandName: '',
     heroHeader: '',
     heroSubheader: '',
+    products: [],
     productPills: [],
-    products: []
+    backgroundImage: '',
+    salesTone: 'friendly',
+    agentType: 'eCommerce'
   });
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (!isLoggedIn) {
-      return;
-    }
-    
-  }, [router]);
+    checkAuth();
+  }, []);
 
-  const handleUpdateAgent = (updates) => {
-    const newData = { ...agentData, ...updates };
-    setAgentData(newData);
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      router.push('/login');
+    } else {
+      setLoading(false);
+    }
   };
+
+  if (loading) return <div className="min-h-screen bg-neutral-100 flex items-center justify-center">Loading...</div>;
 
   return (
     <AgentStudio
       agentData={agentData}
-      onUpdateAgent={handleUpdateAgent}
       onBack={() => router.push('/')}
+      onUpdateAgent={(updates) => setAgentData({ ...agentData, ...updates })}
     />
   );
 }

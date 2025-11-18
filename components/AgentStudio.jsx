@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
-  User,
   Home,
   Settings,
   Package,
@@ -12,7 +11,6 @@ import {
   Share2,
   Edit,
   ArrowUp,
-  X,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -344,14 +342,12 @@ export function AgentStudio({
 
             <div className="flex items-center gap-4">
               <h3 className="text-neutral-900 font-medium">Agent Studio</h3>
-              <button onClick={handleLogout} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-200 transition-colors text-neutral-600 hover:text-neutral-900">
-                <User className="w-5 h-5" />
-              </button>
-              <button
-                onClick={onBack}
-                className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-200 transition-colors text-neutral-600 hover:text-neutral-900"
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-neutral-200 transition-colors text-neutral-600 hover:text-neutral-900"
               >
-                <X className="w-5 h-5" />
+                <span className="text-sm font-medium">Sign out</span>
+                <span className="text-xl">⏎</span>
               </button>
             </div>
           </div>

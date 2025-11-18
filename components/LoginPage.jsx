@@ -27,7 +27,7 @@ export function LoginPage({ onBack, onBackHome }) {
         if (password !== confirmPassword) {
           throw new Error('Passwords do not match');
         }
-   'us  const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         alert('Check your email to confirm your account!');
       } else {
@@ -63,18 +63,14 @@ export function LoginPage({ onBack, onBackHome }) {
             {isSignup ? 'Create Your Account' : 'Welcome Back'}
           </h1>
           <p className="text-neutral-600">
-            {isSignup 
-              ? 'Start building AI agents for your business' 
-              : 'Log in to access Agent Studio'}
+            {isSignup ? 'Start building AI agents for your business' : 'Log in to access Agent Studio'}
           </p>
         </div>
 
         <div className="bg-white rounded-3xl shadow-lg p-8 border border-neutral-200">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-neutral-700">
-                Email Address
-              </Label>
+              <Label htmlFor="email" className="text-neutral-700">Email Address</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                 <Input
@@ -90,9 +86,7 @@ export function LoginPage({ onBack, onBackHome }) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-neutral-700">
-                Password
-              </Label>
+              <Label htmlFor="password" className="text-neutral-700">Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                 <Input
@@ -109,9 +103,7 @@ export function LoginPage({ onBack, onBackHome }) {
 
             {isSignup && (
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-neutral-700">
-                  Confirm Password
-                </Label>
+                <Label htmlFor="confirmPassword" className="text-neutral-700">Confirm Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                   <Input
@@ -131,10 +123,7 @@ export function LoginPage({ onBack, onBackHome }) {
 
             {!isSignup && (
               <div className="text-right">
-                <button
-                  type="button"
-                  className="text-sm text-[#ff5436] hover:text-[#ff5436]/80 transition-colors"
-                >
+                <button type="button" className="text-sm text-[#ff5436] hover:text-[#ff5436]/80 transition-colors">
                   Forgot password?
                 </button>
               </div>
@@ -152,11 +141,7 @@ export function LoginPage({ onBack, onBackHome }) {
           <div className="mt-6 text-center">
             <p className="text-neutral-600">
               {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <button
-                type="button"
-                onClick={() => setIsSignup(!isSignup)}
-                className="text-[#ff5436] hover:text-[#ff5436]/80 transition-colors"
-              >
+              <button type="button" onClick={() => setIsSignup(!isSignup)} className="text-[#ff5436] hover:text-[#ff5436]/80 transition-colors">
                 {isSignup ? 'Log in' : 'Sign up'}
               </button>
             </p>
@@ -164,11 +149,7 @@ export function LoginPage({ onBack, onBackHome }) {
 
           <Separator className="my-6" />
 
-          <Button
-            onClick={onBackHome}
-            variant="outline"
-            className="w-full h-12 rounded-xl border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 transition-colors"
-          >
+          <Button onClick={onBackHome} variant="outline" className="w-full h-12 rounded-xl border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 transition-colors">
             <Home className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
