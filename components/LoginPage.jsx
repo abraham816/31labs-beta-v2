@@ -28,7 +28,7 @@ export function LoginPage({ onBack }) {
         }
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        alert('Check your email to confirm your account!');
+        router.push('/dashboard');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
