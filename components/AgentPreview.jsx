@@ -673,7 +673,7 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
                   editingField === "heroHeader" ? "Enter hero header..." : "Enter subheader..."
                 }
                 rows={3}
-                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] resize-none text-sm"
+                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] resize-none text-sm text-neutral-900 placeholder:text-neutral-400"
                 autoFocus
               />
             )}
@@ -684,7 +684,7 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
                   setEditingField(null);
                   setEditValue("");
                 }}
-                className="flex-1 px-4 py-2 border border-neutral-300 rounded-xl hover:bg-neutral-50 transition-colors text-sm"
+                className="flex-1 px-4 py-2 border border-neutral-300 rounded-xl hover:bg-neutral-50 transition-colors text-sm text-neutral-700"
               >
                 Cancel
               </button>
