@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
-  User,
   Home,
   Settings,
   Package,
@@ -12,7 +11,6 @@ import {
   Share2,
   Edit,
   ArrowUp,
-  X,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -26,22 +24,22 @@ import {
 } from "./ui/tooltip";
 
 export function AgentStudio({
+  initialChatHistory = [],
   agentData,
   onBack,
   onUpdateAgent,
 }) {
+  
   const [activeTab, setActiveTab] = useState("home");
   const [editPrompt, setEditPrompt] = useState("");
   const [conversationStep, setConversationStep] = useState(0);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [userId, setUserId] = useState(null);
-  
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id);
-    });
-  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
 
   const isEmptyAgent =
     !agentData.brandName &&
@@ -58,6 +56,7 @@ export function AgentStudio({
     );
 
   const [chatMessages, setChatMessages] = useState(
+    initialChatHistory.length > 0 ? initialChatHistory :
     isEmptyAgent
       ? [
           {
@@ -78,59 +77,207 @@ export function AgentStudio({
         ],
   );
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = () => {
     if (!editPrompt.trim()) return;
-    
+
+    const lowerPrompt = editPrompt.toLowerCase();
+
     const userMessage = {
       id: Date.now().toString(),
       role: "user",
       content: editPrompt,
       timestamp: new Date(),
     };
-    setChatMessages(prev => [...prev, userMessage]);
-    
-    const response = await fetch('http://127.0.0.1:5000/api/builder/process', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: userId,
-        message: editPrompt,
-        state: 'idle',
-        context: agentData
-      })
-    });
-    
-    const data = await response.json();
-    console.log("Backend response:", data);
-    
-    // Update agent data from backend response
-    if (data.updates) onUpdateAgent(data.updates);
-    if (data.context || data.updated_fields) {
-      // Convert backend snake_case to frontend camelCase
-      const updates = {
-        brandName: data.context.brandName || data.context.brand_name,
-        heroHeader: data.context.heroHeader || data.context.hero_header,
-        heroSubheader: data.context.heroSubheader || data.context.hero_subheader,
-        products: data.context.products || [],
-        productPills: data.context.productPills || data.context.product_pills || [],
-        backgroundImage: data.context.backgroundImage || data.context.background_image,
-        salesTone: data.context.salesTone || data.context.sales_tone,
-        agentType: data.context.agentType || data.context.agent_type
-      };
+
+    let aiResponse = "";
+    let updates = {};
+    let nextStep = conversationStep;
+
+    if (isEmptyAgent || conversationStep < 5) {
+      if (conversationStep === 0) {
+        const words = editPrompt.split(" ");
+        const capitalizedWords = words.filter(
+          (w) => w[0] && w[0] === w[0].toUpperCase() && w.length > 1,
+        );
+        const brandName = capitalizedWords.slice(-1)[0] || "Your Brand";
+
+        updates.brandName = brandName;
+        updates.agentType =
+          lowerPrompt.includes("ecommerce") || lowerPrompt.includes("store")
+            ? "eCommerce"
+            : "Business";
+        aiResponse = `Great! ${brandName} sounds perfect. ✨\n\nNow let's create your hero section:\n• What's your main headline? (e.g., "Premium Fashion for Modern Living")\n• What's your subheader? (e.g., "20% off - Limited Time")`;
+        nextStep = 1;
+      } else if (conversationStep === 1) {
+        const lines = editPrompt.split("\n").filter((l) => l.trim());
+        updates.heroHeader = lines[0]?.trim() || editPrompt.trim();
+        updates.heroSubheader = lines[1]?.trim() || "";
+        aiResponse = `Perfect! Your hero section is set. 🎯\n\nNow add your products:\nShare product names and prices\n\nExample: "T-Shirt $29, Hoodie $65, Cap $15"`;
+        nextStep = 2;
+      } else if (conversationStep === 2) {
+        const productMatches = Array.from(
+          editPrompt.matchAll(
+            /([A-Za-z][A-Za-z0-9\s&'-]*?)(?:\s*:?\s*\$?\s*)(\d+(?:\.\d{2})?)/g,
+          ),
+        );
+        const newProducts = [];
+
+        productMatches.forEach((match, index) => {
+          const name = match[1].trim();
+          const price = parseFloat(match[2]);
+          const id = `product-${Date.now()}-${index}`;
+          const image = "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400";
+          newProducts.push({ id, name, price, image });
+        });
+
+        const newPills = newProducts.map((product) => ({
+          name: product.name,
+          image: product.image,
+        }));
+
+        updates.products = newProducts;
+        updates.productPills = newPills;
+        aiResponse = `Excellent! ${newProducts.length} products added. 🛍️\n\nNext, let's set a background image for your agent:\nPaste an image URL or type "skip" for default background\n\nExample: https://images.unsplash.com/photo-...`;
+        nextStep = 3;
+      } else if (conversationStep === 3) {
+        if (
+          lowerPrompt === "skip" ||
+          lowerPrompt.includes("default") ||
+          lowerPrompt.includes("no background")
+        ) {
+          updates.backgroundImage = "";
+        } else if (lowerPrompt.includes("http")) {
+          const urlMatch = editPrompt.match(/(https?:\/\/[^\s]+)/);
+          updates.backgroundImage = urlMatch ? urlMatch[1] : "";
+        } else {
+          updates.backgroundImage = "";
+        }
+
+        aiResponse = `Great! Background set. 🎨\n\nLast step - choose your agent's tone:\n• Friendly\n• Professional\n• Casual\n• Luxury`;
+        nextStep = 4;
+      } else if (conversationStep === 4) {
+        let tone = "friendly";
+        if (lowerPrompt.includes("professional")) tone = "professional";
+        else if (lowerPrompt.includes("casual")) tone = "casual";
+        else if (lowerPrompt.includes("luxury")) tone = "luxury";
+
+        updates.salesTone = tone;
+        aiResponse = `🎉 Congratulations! Your ${agentData.brandName} agent is ready!\n\nYour agent URL: 31labs.com/${agentData.brandName?.toLowerCase().replace(/\s/g, "-")}\n\nYou can continue editing anytime using prompts like:\n• "hero: New Text"\n• "add product pill Accessories"\n• "make it more professional"`;
+        nextStep = 5;
+      }
+    } else {
+      if (
+        lowerPrompt.includes("hero") &&
+        !lowerPrompt.includes("subheader") &&
+        !lowerPrompt.includes("subtitle")
+      ) {
+        const match = editPrompt.match(/hero.*?(?:to|:|is|=)?\s*(.+?)$/i);
+        if (match) {
+          const newText = match[1].replace(/^["']|["']$/g, "").trim();
+          if (newText && newText.length > 0) {
+            updates.heroHeader = newText;
+            aiResponse = `✅ ${agentData.heroHeader ? "Updated" : "Added"} hero header to "${newText}"`;
+          }
+        }
+        if (!aiResponse) {
+          aiResponse =
+            "I can update the hero text. Try: 'hero Your New Text' or 'add hero: Premium Collection'";
+        }
+      } else if (
+        lowerPrompt.includes("subheader") ||
+        lowerPrompt.includes("subtitle") ||
+        lowerPrompt.includes("sub header") ||
+        lowerPrompt.includes("sub-header")
+      ) {
+        const match = editPrompt.match(
+          /(?:subheader|subtitle|sub[\s-]?header).*?(?:to|:|is|=)?\s*(.+?)$/i,
+        );
+        if (match) {
+          const newText = match[1].replace(/^["']|["']$/g, "").trim();
+          if (newText && newText.length > 0) {
+            updates.heroSubheader = newText;
+            aiResponse = `✅ ${agentData.heroSubheader ? "Updated" : "Added"} subheader to "${newText}"`;
+          }
+        }
+        if (!aiResponse) {
+          aiResponse =
+            "I can update the subheader. Try: 'subheader Your New Text' or 'add subheader: Discover our collection'";
+        }
+      } else if (lowerPrompt.includes("brand")) {
+        const match = editPrompt.match(/brand.*?(?:to|:|is|=)?\s*(.+?)$/i);
+        if (match) {
+          const newText = match[1].replace(/^["']|["']$/g, "").trim();
+          if (newText && newText.length > 0) {
+            updates.brandName = newText;
+            aiResponse = `✅ Updated brand name to "${newText}"`;
+          }
+        }
+        if (!aiResponse) {
+          aiResponse =
+            "I can update the brand name. Try: 'brand YourBrand' or 'brand: LUXE'";
+        }
+      } else if (
+        (lowerPrompt.includes("add") && lowerPrompt.includes("product")) ||
+        (lowerPrompt.includes("product") && lowerPrompt.includes("pill")) ||
+        (lowerPrompt.includes("add") && lowerPrompt.includes("category"))
+      ) {
+        const match =
+          editPrompt.match(/(?:add|pill|category).*?["'](.+?)["']/i) ||
+          editPrompt.match(/(?:add|pill|category)\s+(\w+.*?)$/i);
+        if (match) {
+          const newPillName = match[1].trim();
+          const newPill = {
+            name: newPillName,
+            image:
+              agentData.productPills[0]?.image ||
+              "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400",
+          };
+          updates.productPills = [...(agentData.productPills || []), newPill];
+          aiResponse = `✅ Added "${newPillName}" to product pills`;
+        } else {
+          aiResponse =
+            "I can add product pills. Try: 'add product pill Hoodies' or 'add category Accessories'";
+        }
+      } else if (
+        lowerPrompt.includes("tone") ||
+        lowerPrompt.includes("friendly") ||
+        lowerPrompt.includes("professional") ||
+        lowerPrompt.includes("casual")
+      ) {
+        let tone = "";
+        if (lowerPrompt.includes("friendly")) tone = "friendly";
+        else if (lowerPrompt.includes("professional")) tone = "professional";
+        else if (lowerPrompt.includes("casual")) tone = "casual";
+
+        if (tone) {
+          updates.salesTone = tone;
+          aiResponse = `✅ Updated sales tone to ${tone}`;
+        } else {
+          aiResponse =
+            "I can update the tone. Try: 'make it more friendly' or 'professional tone'";
+        }
+      } else {
+        aiResponse = `I can help you:\n• "brand: YourBrand" - Change brand name\n• "hero: Your New Hero" - Add/change hero text\n• "subheader: Your subtitle" - Add/change subheader\n• "add product pill Hoodies" - Add product category\n• "make it friendly" - Change tone`;
+      }
+    }
+
+    if (Object.keys(updates).length > 0 && onUpdateAgent) {
       onUpdateAgent(updates);
     }
-    if (data.updated_fields) {
-      onUpdateAgent(data.updated_fields);
-    }
-    
-    setChatMessages(prev => [...prev, {
+
+    setConversationStep(nextStep);
+
+    const aiMessage = {
       id: (Date.now() + 1).toString(),
       role: "assistant",
-      content: (data.response || '').split('{')[0].trim() || "I'll help you with that!",
+      content: aiResponse,
       timestamp: new Date(),
-    }]);
-    
-    setEditPrompt("");
+    };
+
+    const newMessages = [...chatMessages, userMessage, aiMessage];
+setChatMessages(newMessages);
+onUpdateAgent(updates, newMessages);
+setEditPrompt("");
   };
 
   const handleKeyPress = (e) => {
@@ -200,14 +347,12 @@ export function AgentStudio({
 
             <div className="flex items-center gap-4">
               <h3 className="text-neutral-900 font-medium">Agent Studio</h3>
-              <button className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-200 transition-colors text-neutral-600 hover:text-neutral-900">
-                <User className="w-5 h-5" />
-              </button>
-              <button
-                onClick={onBack}
-                className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-neutral-200 transition-colors text-neutral-600 hover:text-neutral-900"
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-neutral-200 transition-colors text-neutral-600 hover:text-neutral-900"
               >
-                <X className="w-5 h-5" />
+                <span className="text-sm font-medium">Sign out</span>
+                <span className="text-xl">⏎</span>
               </button>
             </div>
           </div>

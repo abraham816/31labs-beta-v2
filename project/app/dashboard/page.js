@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
-const AgentStudio = dynamic(() => import("@/components/AgentStudio"), { ssr: false });
+const AgentStudio = dynamic(() => import("@/components/AgentStudio_backup"), { ssr: false });
 
 export default function DashboardPage() {
   const router = useRouter();
