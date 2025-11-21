@@ -44,7 +44,7 @@ export function AgentStudio({
       setUserId(user.id);
       
       try {
-        const res = await fetch(`http://127.0.0.1:5000/api/builder/context/${user.id}`);
+        const res = await fetch(`https://three1labs-backend.onrender.com/api/builder/context/${user.id}`);
         const data = await res.json();
         if (data.context && data.context.brandName) {
           onUpdateAgent(data.context);
@@ -102,7 +102,7 @@ export function AgentStudio({
     };
     setChatMessages(prev => [...prev, userMessage]);
     
-    const response = await fetch('http://127.0.0.1:5000/api/builder/process', {
+    const response = await fetch('https://three1labs-backend.onrender.com/api/builder/process', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
