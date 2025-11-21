@@ -266,6 +266,19 @@ const handleSaveField = async () => {
   setEditValue("");
 };
 
+const handleBackgroundUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file && onUpdateAgent) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onUpdateAgent({
+          backgroundImage: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
   return (
     <div
       className="h-full flex flex-col relative"
