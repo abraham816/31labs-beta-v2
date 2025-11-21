@@ -117,25 +117,60 @@ export function AgentStudio({
     console.log("Backend response:", data);
     
     // Update agent data from backend response
-    if (data.updates) onUpdateAgent(data.updates);
-    if (data.context || data.updated_fields) {
-      // Convert backend snake_case to frontend camelCase
-      const updates = {
-        brandName: data.context.brandName || data.context.brand_name,
-        heroHeader: data.context.heroHeader || data.context.hero_header,
-        heroSubheader: data.context.heroSubheader || data.context.hero_subheader,
-        products: data.context.products || [],
-        productPills: data.context.productPills || data.context.product_pills || [],
-        backgroundImage: data.context.backgroundImage || data.context.background_image,
-        salesTone: data.context.salesTone || data.context.sales_tone,
-        agentType: data.context.agentType || data.context.agent_type
-      };
-      onUpdateAgent(updates);
-    }
-    if (data.updated_fields) {
-      onUpdateAgent(data.updated_fields);
-    }
+if (data.updates) onUpdateAgent(data.updates);
+if (data.context || data.updated_fields) {
+  // Build complete updates from backend + existing data
+  const updates = {
+    brandName: data.context.brandName || data.context.brand_name || agentData.brandName || '',
+    heroHeader: data.context.heroHeader || data.context.hero_header || agentData.heroHeader || '',
+    heroSubheader: data.context.heroSubheader || data.context.hero_subheader || agentData.heroSubheader || '',
+    heroColor: data.context.heroColor || data.context.hero_color || agentData.heroColor || '#171717',
+    heroTextSize: data.context.heroTextSize || data.context.hero_text_size || agentData.heroTextSize || 'text-6xl',
+    heroWeight: data.context.heroWeight || data.context.hero_weight || agentData.heroWeight || 'font-normal',
+    subheaderColor: data.context.subheaderColor || data.context.subheader_color || agentData.subheaderColor || '#525252',
+    subheaderTextSize: data.context.subheaderTextSize || data.context.subheader_text_size || agentData.subheaderTextSize || 'text-xl',
+    subheaderWeight: data.context.subheaderWeight || data.context.subheader_weight || agentData.subheaderWeight || 'font-normal',
+    products: data.context.products || agentData.products || [],
+    productPills: data.context.productPills || data.context.product_pills || agentData.productPills || [],
+    backgroundImage: data.context.backgroundImage || data.context.background_image || agentData.backgroundImage || '',
+    salesTone: data.context.salesTone || data.context.sales_tone || agentData.salesTone || 'friendly',
+    agentType: data.context.agentType || data.context.agent_type || agentData.agentType || 'eCommerce'
+  };
+  onUpdateAgent(updates);
+  
+  // Save to DB immediately
+  if (userId) {
+    const { error } = await supabase
+      .from('agents')
+      .upsert({
+        user_id: userId,
+        brand_name: updates.brandName,
+        hero_header: updates.heroHeader,
+        hero_subheader: updates.heroSubheader,
+        hero_color: updates.heroColor,
+        hero_text_size: updates.heroTextSize,
+        hero_weight: updates.heroWeight,
+        subheader_color: updates.subheaderColor,
+        subheader_text_size: updates.subheaderTextSize,
+        subheader_weight: updates.subheaderWeight,
+        products: updates.products,
+        product_pills: updates.productPills,
+        background_image: updates.backgroundImage,
+        sales_tone: updates.salesTone,
+        agent_type: updates.agentType,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
     
+    if (!error) console.log('✅ AI edit saved');
+    else console.error('AI save error:', error);
+  }
+}
+if (data.updated_fields) {
+  onUpdateAgent(data.updated_fields);
+}
+    if (!error) console.log('✅ AI edit saved to DB');
+  }
+}
     setChatMessages(prev => [...prev, {
       id: (Date.now() + 1).toString(),
       role: "assistant",
