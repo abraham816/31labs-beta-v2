@@ -208,7 +208,25 @@ if (data.updated_fields) {
       productPills: updatedPills,
     });
 
-    const handleDeleteProduct = async (productId) => {
+    // Save to DB immediately
+    if (userId) {
+      const { error } = await supabase
+        .from('agents')
+        .update({
+          products: updatedProducts,
+          product_pills: updatedPills,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId);
+      
+      if (!error) console.log('✅ Product saved to DB');
+      else console.error('Product save error:', error);
+    }
+  }
+  setEditingProduct(null);
+};
+
+const handleDeleteProduct = async (productId) => {
   if (onUpdateAgent) {
     const updatedProducts = agentData.products.filter((p) => p.id !== productId);
     const updatedPills = updatedProducts.map((p) => ({
@@ -237,21 +255,6 @@ if (data.updated_fields) {
     }
   }
 };
-
-  const handleDeleteProduct = (productId) => {
-    if (onUpdateAgent) {
-      const updatedProducts = agentData.products.filter((p) => p.id !== productId);
-      const updatedPills = updatedProducts.map((p) => ({
-        name: p.name,
-        image: p.image,
-      }));
-
-      onUpdateAgent({
-        products: updatedProducts,
-        productPills: updatedPills,
-      });
-    }
-  };
 
   const handlePublish = () => {
     if (isAgentReady) {
