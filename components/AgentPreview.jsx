@@ -233,10 +233,9 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
     setEditValue(currentValue);
   };
 const handleSaveField = async () => {
-  if (onUpdateAgent && editingField) {
+  if (editingField) {
     let updates = {};
     
-    // Update text if changed
     if (editValue.trim()) {
       switch (editingField) {
         case "brandName":
@@ -255,11 +254,32 @@ const handleSaveField = async () => {
       onUpdateAgent(updates);
     }
     
-    // Save with merged data
+    // Direct save to Supabase
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      const fullAgentData = { ...agentData, ...updates };
-      await saveAgent(user.id, fullAgentData);
+      const { error } = await supabase
+        .from('agents')
+        .upsert({
+          user_id: user.id,
+          brand_name: updates.brandName || agentData.brandName || '',
+          hero_header: updates.heroHeader || agentData.heroHeader || '',
+          hero_subheader: updates.heroSubheader || agentData.heroSubheader || '',
+          hero_color: agentData.heroColor || '#171717',
+          hero_text_size: agentData.heroTextSize || 'text-6xl',
+          hero_weight: agentData.heroWeight || 'font-normal',
+          subheader_color: agentData.subheaderColor || '#525252',
+          subheader_text_size: agentData.subheaderTextSize || 'text-xl',
+          subheader_weight: agentData.subheaderWeight || 'font-normal',
+          products: agentData.products || [],
+          product_pills: agentData.productPills || [],
+          background_image: updates.backgroundImage || agentData.backgroundImage || '',
+          sales_tone: agentData.salesTone || 'friendly',
+          agent_type: agentData.agentType || 'eCommerce',
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' });
+      
+      if (error) console.error('Save error:', error);
+      else console.log('✅ Saved to DB');
     }
   }
   setEditingField(null);
@@ -278,7 +298,7 @@ const handleBackgroundUpload = (e) => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   return (
     <div
       className="h-full flex flex-col relative"
