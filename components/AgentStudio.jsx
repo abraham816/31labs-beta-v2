@@ -37,11 +37,24 @@ export function AgentStudio({
   const [editingProduct, setEditingProduct] = useState(null);
   const [userId, setUserId] = useState(null);
   
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id);
-    });
-  }, []);
+ useEffect(() => {
+  const init = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setUserId(user.id);
+      
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/api/builder/context/${user.id}`);
+        const data = await res.json();
+        if (data.context && data.context.brandName) {
+          onUpdateAgent(data.context);
+        }
+      } catch (err) {
+      }
+    }
+  };
+  init();
+}, []);
 
   const isEmptyAgent =
     !agentData.brandName &&

@@ -34,7 +34,7 @@ class AgentBuilder:
         try:
             result = supabase.table('agents').select('*').eq(
                 'user_id', self.user_id
-            ).order('updated_at.desc').limit(1).single().execute()
+            ).order('updated_at.desc').limit(1).execute()
             
             if result.data and len(result.data) > 0:
                 agent_data = result.data[0]
@@ -63,9 +63,9 @@ class AgentBuilder:
                     'hero_header': '',
                     'hero_subheader': '',
                     'hero_color': '#171717',
-                    'hero_text_size': 'text-6xl',
+                    'hero_text_size': 'text-2xl',
                     'subheader_color': '#525252',
-                    'subheader_text_size': 'text-xl',
+                    'subheader_text_size': 'text-sm',
                     'products': [],
                     'product_pills': [],
                     'background_image': '',
@@ -83,9 +83,9 @@ class AgentBuilder:
                 'hero_header': '',
                 'hero_subheader': '',
                 'hero_color': '#171717',
-                'hero_text_size': 'text-6xl',
+                'hero_text_size': 'text-2xl',
                 'subheader_color': '#525252',
-                'subheader_text_size': 'text-xl',
+                'subheader_text_size': 'text-sm',
                 'products': [],
                 'product_pills': [],
                 'background_image': '',
@@ -148,7 +148,6 @@ class AgentBuilder:
         
         system_prompt = f"""You're building an eCommerce agent. Current state: {self.context['state']}
 
-CRITICAL: "hero text" means hero_color field. "background" means background_image field. NEVER mix these up!
 Current build:
 Brand: {self.context.get('brand_name', 'Not set')}
 Header: {self.context.get('hero_header', 'Not set')}
@@ -310,9 +309,9 @@ def reset_builder():
         'hero_header': '',
         'hero_subheader': '',
         'hero_color': '#171717',
-        'hero_text_size': 'text-6xl',
+        'hero_text_size': 'text-2xl',
         'subheader_color': '#525252',
-        'subheader_text_size': 'text-xl',
+        'subheader_text_size': 'text-sm',
         'products': [],
         'product_pills': [],
         'background_image': '',

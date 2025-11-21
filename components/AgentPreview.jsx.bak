@@ -72,11 +72,11 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
   } = agentData;
 
   const displayPills =
-  agentData.productPills && agentData.productPills.length > 0
-    ? agentData.productPills
-    : agentData.products && agentData.products.length > 0
-      ? agentData.products.map((p) => ({ name: p.name, image: p.image }))
-      : DEFAULT_MOCK_PRODUCTS.map((p) => ({ name: p.name, image: p.image }));
+    agentData.agentData.productPills && agentData.agentData.productPills.length > 0
+      ? agentData.agentData.productPills
+      : agentData.agentData.products && agentData.agentData.products.length > 0
+        ? agentData.agentData.products.map((p) => ({ name: p.name, image: p.image }))
+        : DEFAULT_MOCK_PRODUCTS.map((p) => ({ name: p.name, image: p.image }));
 
   const [prompt, setPrompt] = useState("");
   const [editingField, setEditingField] = useState(null);
@@ -95,7 +95,8 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
     scrollToBottom();
   }, [messages]);
 
-    const displayProducts = agentData.products && agentData.products.length > 0 ? agentData.products : DEFAULT_MOCK_PRODUCTS;
+  const displayProducts =
+    agentData.products && agentData.products.length > 0 ? agentData.products : DEFAULT_MOCK_PRODUCTS;
 
   const PRODUCT_DETAILS = {};
   displayProducts.forEach((product) => {
@@ -274,7 +275,7 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
       className="h-full flex flex-col relative"
       style={{
         backgroundColor: "#f5f5f5",
-        backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
+        backgroundImage: "none",
         backgroundSize: backgroundImage ? "cover" : "auto",
         backgroundPosition: backgroundImage ? "center" : "0% 0%",
         backgroundRepeat: backgroundImage ? "no-repeat" : "repeat",
@@ -337,7 +338,7 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
                   className="text-center mb-3 px-2 max-w-2xl cursor-pointer group"
                   onClick={() => handleEditField("heroHeader", heroHeader)}
                 >
-                  <h1 className={`${agentData.heroTextSize || 'text-6xl'} ${agentData.heroWeight || 'font-normal'} mb-2 tracking-wide uppercase leading-tight group-hover:opacity-70 transition-opacity`} style={{color: agentData.heroColor || '#171717'}}>
+                  <h1 className="text-neutral-900 mb-2 text-xl sm:text-2xl tracking-wide uppercase leading-tight group-hover:opacity-70 transition-opacity" style={{textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(255,255,255,0.8)"}}>
                     {heroHeader}
                   </h1>
                 </div>
@@ -360,7 +361,7 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
                   className="text-center mb-6 sm:mb-8 px-2 max-w-2xl cursor-pointer group"
                   onClick={() => handleEditField("heroSubheader", heroSubheader)}
                 >
-                  <p className={`${agentData.subheaderTextSize || 'text-xl'} ${agentData.subheaderWeight || 'font-normal'} group-hover:opacity-70 transition-opacity`} style={{color: agentData.subheaderColor || '#525252'}}>
+                  <p className="text-neutral-700 text-xs sm:text-sm group-hover:opacity-70 transition-opacity" style={{textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 0 4px rgba(255,255,255,0.8)"}}>
                     {heroSubheader}
                   </p>
                 </div>
@@ -672,66 +673,10 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
                   editingField === "heroHeader" ? "Enter hero header..." : "Enter subheader..."
                 }
                 rows={3}
-                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] resize-none text-sm text-neutral-900 placeholder:text-neutral-400"
+                className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5436] resize-none text-sm !text-neutral-900 placeholder:text-neutral-400"
                 autoFocus
               />
             )}
-            
-            {(editingField === "heroHeader" || editingField === "heroSubheader") && (
-  <>
-    <div className="mt-3">
-      <label className="text-sm text-neutral-700 mb-2 block">Text Color</label>
-      <input 
-        type="color" 
-        value={editingField === "heroHeader" ? (agentData.heroColor || '#171717') : (agentData.subheaderColor || '#525252')}
-        onChange={(e) => onUpdateAgent(editingField === "heroHeader" ? {heroColor: e.target.value} : {subheaderColor: e.target.value})}
-        className="w-full h-10 rounded-lg cursor-pointer border border-neutral-300"
-      />
-    </div>
-    
-    <div className="mt-3">
-      <label className="text-sm text-neutral-700 mb-2 block">Text Size</label>
-      <input 
-        type="range" 
-        min="0" 
-        max="12"
-        value={
-          editingField === "heroHeader" 
-            ? ['text-xs','text-sm','text-base','text-lg','text-xl','text-2xl','text-3xl','text-4xl','text-5xl','text-6xl','text-7xl','text-8xl','text-9xl'].indexOf(agentData.heroTextSize || 'text-6xl')
-            : ['text-xs','text-sm','text-base','text-lg','text-xl','text-2xl','text-3xl','text-4xl','text-5xl','text-6xl','text-7xl','text-8xl','text-9xl'].indexOf(agentData.subheaderTextSize || 'text-xl')
-        }
-        onChange={(e) => {
-          const sizes = ['text-xs','text-sm','text-base','text-lg','text-xl','text-2xl','text-3xl','text-4xl','text-5xl','text-6xl','text-7xl','text-8xl','text-9xl'];
-          onUpdateAgent(editingField === "heroHeader" ? {heroTextSize: sizes[e.target.value]} : {subheaderTextSize: sizes[e.target.value]});
-        }}
-        className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer"
-      />
-    </div>
-    
-    <div className="mt-3">
-      <label className="text-sm text-neutral-700 mb-2 block">Font Weight</label>
-      <input 
-        type="range" 
-        min="0" 
-        max="6"
-        value={
-          editingField === "heroHeader" 
-            ? ['font-light','font-normal','font-medium','font-semibold','font-bold','font-extrabold','font-black'].indexOf(agentData.heroWeight || 'font-normal')
-            : ['font-light','font-normal','font-medium','font-semibold','font-bold','font-extrabold','font-black'].indexOf(agentData.subheaderWeight || 'font-normal')
-        }
-        onChange={(e) => {
-          const weights = ['font-light','font-normal','font-medium','font-semibold','font-bold','font-extrabold','font-black'];
-          onUpdateAgent(editingField === "heroHeader" ? {heroWeight: weights[e.target.value]} : {subheaderWeight: weights[e.target.value]});
-        }}
-        className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer"
-      />
-      <div className="flex justify-between text-xs text-neutral-500 mt-1">
-        <span>Light</span>
-        <span>Bold</span>
-      </div>
-    </div>
-  </>
-)}
 
             <div className="flex gap-3 mt-6">
               <button
