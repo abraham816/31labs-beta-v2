@@ -259,8 +259,7 @@ const handleSaveField = async () => {
     if (user) {
       const { error } = await supabase
         .from('agents')
-        .upsert({
-          user_id: user.id,
+        .update({
           brand_name: updates.brandName || agentData.brandName || '',
           hero_header: updates.heroHeader || agentData.heroHeader || '',
           hero_subheader: updates.heroSubheader || agentData.heroSubheader || '',
@@ -276,7 +275,8 @@ const handleSaveField = async () => {
           sales_tone: agentData.salesTone || 'friendly',
           agent_type: agentData.agentType || 'eCommerce',
           updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id' });
+        })
+        .eq('user_id', user.id);
       
       if (error) console.error('Save error:', error);
       else console.log('✅ Saved to DB');

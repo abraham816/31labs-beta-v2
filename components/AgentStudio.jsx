@@ -116,7 +116,7 @@ export function AgentStudio({
     const data = await response.json();
     console.log("Backend response:", data);
     
-    // Update agent data from backend response
+// Update agent data from backend response
 if (data.updates) onUpdateAgent(data.updates);
 if (data.context || data.updated_fields) {
   // Build complete updates from backend + existing data
@@ -142,8 +142,7 @@ if (data.context || data.updated_fields) {
   if (userId) {
     const { error } = await supabase
       .from('agents')
-      .upsert({
-        user_id: userId,
+      .update({
         brand_name: updates.brandName,
         hero_header: updates.heroHeader,
         hero_subheader: updates.heroSubheader,
@@ -159,7 +158,8 @@ if (data.context || data.updated_fields) {
         sales_tone: updates.salesTone,
         agent_type: updates.agentType,
         updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id' });
+      })
+      .eq('user_id', userId);
     
     if (!error) console.log('✅ AI edit saved');
     else console.error('AI save error:', error);
@@ -167,9 +167,6 @@ if (data.context || data.updated_fields) {
 }
 if (data.updated_fields) {
   onUpdateAgent(data.updated_fields);
-}
-    if (!error) console.log('✅ AI edit saved to DB');
-  }
 }
     setChatMessages(prev => [...prev, {
       id: (Date.now() + 1).toString(),
