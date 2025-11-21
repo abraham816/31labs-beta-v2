@@ -70,9 +70,6 @@ class AgentBuilder:
                     'product_pills': [],
                     'background_image': '',
                     'sales_tone': 'friendly',
-        'agent_type': 'eCommerce',
-        'conversation_history': []
-    }
                     'agent_type': 'eCommerce',
                     'conversation_history': []
                 }
@@ -93,9 +90,6 @@ class AgentBuilder:
                 'product_pills': [],
                 'background_image': '',
                 'sales_tone': 'friendly',
-        'agent_type': 'eCommerce',
-        'conversation_history': []
-    }
                 'agent_type': 'eCommerce',
                 'conversation_history': []
             }
@@ -325,22 +319,35 @@ def reset_builder():
         'sales_tone': 'friendly',
         'agent_type': 'eCommerce',
         'conversation_history': []
+
     }
-    @app.route('/api/builder/context/<user_id>', methods=['GET'])
+    builders[user_id].save_context()
+    
+    return jsonify({'success': True, 'message': 'Builder reset successfully'})
+    
+
+@app.route('/api/builder/context/<user_id>', methods=['GET'])
 def get_context(user_id):
     if user_id not in builders:
         builders[user_id] = AgentBuilder(user_id)
     
+    ctx = builders[user_id].context
     return jsonify({
-        'context': builders[user_id].context,
-        'state': builders[user_id].context.get('state', 'start')
-    })
-    if user_id not in builders:
-        builders[user_id] = AgentBuilder(user_id)
-    
-    return jsonify({
-        'context': builders[user_id].context,
-        'state': builders[user_id].context.get('state', 'start')
+        'context': {
+            'brandName': ctx.get('brand_name', ''),
+            'heroHeader': ctx.get('hero_header', ''),
+            'heroSubheader': ctx.get('hero_subheader', ''),
+            'heroColor': ctx.get('hero_color', '#171717'),
+            'heroTextSize': ctx.get('hero_text_size', 'text-6xl'),
+            'heroWeight': ctx.get('hero_weight', 'font-normal'),
+            'subheaderColor': ctx.get('subheader_color', '#525252'),
+            'subheaderTextSize': ctx.get('subheader_text_size', 'text-xl'),
+            'subheaderWeight': ctx.get('subheader_weight', 'font-normal'),
+            'products': ctx.get('products', []),
+            'productPills': ctx.get('product_pills', []),
+            'backgroundImage': ctx.get('background_image', ''),
+            'salesTone': ctx.get('sales_tone', 'friendly')
+        }
     })
 
 @app.route('/api/builder/process', methods=['POST'])
