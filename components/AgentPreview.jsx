@@ -1,3 +1,5 @@
+import { saveAgent } from "@/lib/agentService";
+import { supabase } from "@/lib/supabase";
 import { useState, useRef, useEffect } from "react";
 import { ArrowUp, X, Upload, Link as LinkIcon } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -230,29 +232,30 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
     setEditingField(field);
     setEditValue(currentValue);
   };
-
-  const handleSaveField = async () => {
-  if (onUpdateAgent && editingField && editValue.trim()) {
-    const updates = {};
-
-    switch (editingField) {
-      case "brandName":
-        updates.brandName = editValue.trim();
-        break;
-      case "heroHeader":
-        updates.heroHeader = editValue.trim();
-        break;
-      case "heroSubheader":
-        updates.heroSubheader = editValue.trim();
-        break;
-      case "backgroundImage":
-        updates.backgroundImage = editValue.trim();
-        break;
-    }
-
-    onUpdateAgent(updates);
+const handleSaveField = async () => {
+  if (onUpdateAgent && editingField) {
+    let updates = {};
     
-    // Save to database
+    // Update text if changed
+    if (editValue.trim()) {
+      switch (editingField) {
+        case "brandName":
+          updates.brandName = editValue.trim();
+          break;
+        case "heroHeader":
+          updates.heroHeader = editValue.trim();
+          break;
+        case "heroSubheader":
+          updates.heroSubheader = editValue.trim();
+          break;
+        case "backgroundImage":
+          updates.backgroundImage = editValue.trim();
+          break;
+      }
+      onUpdateAgent(updates);
+    }
+    
+    // Save with merged data
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const fullAgentData = { ...agentData, ...updates };
@@ -262,19 +265,6 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
   setEditingField(null);
   setEditValue("");
 };
-
-  const handleBackgroundUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (file && onUpdateAgent) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        onUpdateAgent({
-          backgroundImage: reader.result,
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   return (
     <div
