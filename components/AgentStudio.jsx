@@ -185,31 +185,58 @@ if (data.updated_fields) {
     }
   };
 
-  const handleSaveProduct = (product) => {
-    if (onUpdateAgent) {
-      const existingProducts = agentData.products || [];
-      const existingIndex = existingProducts.findIndex((p) => p.id === product.id);
+ const handleSaveProduct = async (product) => {
+  if (onUpdateAgent) {
+    const existingProducts = agentData.products || [];
+    const existingIndex = existingProducts.findIndex((p) => p.id === product.id);
 
-      let updatedProducts;
-      if (existingIndex >= 0) {
-        updatedProducts = [...existingProducts];
-        updatedProducts[existingIndex] = product;
-      } else {
-        updatedProducts = [...existingProducts, product];
-      }
-
-      const updatedPills = updatedProducts.map((p) => ({
-        name: p.name,
-        image: p.image,
-      }));
-
-      onUpdateAgent({
-        products: updatedProducts,
-        productPills: updatedPills,
-      });
+    let updatedProducts;
+    if (existingIndex >= 0) {
+      updatedProducts = [...existingProducts];
+      updatedProducts[existingIndex] = product;
+    } else {
+      updatedProducts = [...existingProducts, product];
     }
-    setEditingProduct(null);
-  };
+
+    const updatedPills = updatedProducts.map((p) => ({
+      name: p.name,
+      image: p.image,
+    }));
+
+    onUpdateAgent({
+      products: updatedProducts,
+      productPills: updatedPills,
+    });
+
+    const handleDeleteProduct = async (productId) => {
+  if (onUpdateAgent) {
+    const updatedProducts = agentData.products.filter((p) => p.id !== productId);
+    const updatedPills = updatedProducts.map((p) => ({
+      name: p.name,
+      image: p.image,
+    }));
+
+    onUpdateAgent({
+      products: updatedProducts,
+      productPills: updatedPills,
+    });
+
+    // Save to DB immediately
+    if (userId) {
+      const { error } = await supabase
+        .from('agents')
+        .update({
+          products: updatedProducts,
+          product_pills: updatedPills,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId);
+      
+      if (!error) console.log('✅ Product deleted from DB');
+      else console.error('Product delete error:', error);
+    }
+  }
+};
 
   const handleDeleteProduct = (productId) => {
     if (onUpdateAgent) {
