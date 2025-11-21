@@ -70,6 +70,9 @@ class AgentBuilder:
                     'product_pills': [],
                     'background_image': '',
                     'sales_tone': 'friendly',
+        'agent_type': 'eCommerce',
+        'conversation_history': []
+    }
                     'agent_type': 'eCommerce',
                     'conversation_history': []
                 }
@@ -90,6 +93,9 @@ class AgentBuilder:
                 'product_pills': [],
                 'background_image': '',
                 'sales_tone': 'friendly',
+        'agent_type': 'eCommerce',
+        'conversation_history': []
+    }
                 'agent_type': 'eCommerce',
                 'conversation_history': []
             }
@@ -317,6 +323,9 @@ def reset_builder():
         'product_pills': [],
         'background_image': '',
         'sales_tone': 'friendly',
+        'agent_type': 'eCommerce',
+        'conversation_history': []
+    }
     @app.route('/api/builder/context/<user_id>', methods=['GET'])
 def get_context(user_id):
     if user_id not in builders:
