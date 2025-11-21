@@ -231,30 +231,37 @@ export function AgentPreview({ agentData, onUpdateAgent }) {
     setEditValue(currentValue);
   };
 
-  const handleSaveField = () => {
-    if (onUpdateAgent && editingField && editValue.trim()) {
-      const updates = {};
+  const handleSaveField = async () => {
+  if (onUpdateAgent && editingField && editValue.trim()) {
+    const updates = {};
 
-      switch (editingField) {
-        case "brandName":
-          updates.brandName = editValue.trim();
-          break;
-        case "heroHeader":
-          updates.heroHeader = editValue.trim();
-          break;
-        case "heroSubheader":
-          updates.heroSubheader = editValue.trim();
-          break;
-        case "backgroundImage":
-          updates.backgroundImage = editValue.trim();
-          break;
-      }
-
-      onUpdateAgent(updates);
+    switch (editingField) {
+      case "brandName":
+        updates.brandName = editValue.trim();
+        break;
+      case "heroHeader":
+        updates.heroHeader = editValue.trim();
+        break;
+      case "heroSubheader":
+        updates.heroSubheader = editValue.trim();
+        break;
+      case "backgroundImage":
+        updates.backgroundImage = editValue.trim();
+        break;
     }
-    setEditingField(null);
-    setEditValue("");
-  };
+
+    onUpdateAgent(updates);
+    
+    // Save to database
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const fullAgentData = { ...agentData, ...updates };
+      await saveAgent(user.id, fullAgentData);
+    }
+  }
+  setEditingField(null);
+  setEditValue("");
+};
 
   const handleBackgroundUpload = (e) => {
     const file = e.target.files?.[0];
