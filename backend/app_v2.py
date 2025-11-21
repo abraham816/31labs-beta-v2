@@ -317,15 +317,15 @@ def reset_builder():
         'product_pills': [],
         'background_image': '',
         'sales_tone': 'friendly',
-        'agent_type': 'eCommerce',
-        'conversation_history': []
-    }
-    builders[user_id].save_context()
-    
-    return jsonify({'success': True, 'message': 'Builder reset successfully'})
-
-@app.route('/api/builder/context/<user_id>', methods=['GET'])
+    @app.route('/api/builder/context/<user_id>', methods=['GET'])
 def get_context(user_id):
+    if user_id not in builders:
+        builders[user_id] = AgentBuilder(user_id)
+    
+    return jsonify({
+        'context': builders[user_id].context,
+        'state': builders[user_id].context.get('state', 'start')
+    })
     if user_id not in builders:
         builders[user_id] = AgentBuilder(user_id)
     
