@@ -235,7 +235,7 @@ IMPORTANT: Always extract product name and price. Products format: [{{"name": "X
                     'heroTextSize': self.context.get('hero_text_size', 'text-2xl'),
                     'subheaderColor': self.context.get('subheader_color', '#525252'),
                     'subheaderTextSize': self.context.get('subheader_text_size', 'text-sm'),
-                    'products': self.context.get('products', []) or [],
+                    'products': result.get('updated_fields', {}).get('products', []) or [],
                     'productPills': self.context.get('product_pills', []) or [],
                     'backgroundImage': self.context.get('background_image', ''),
                     'salesTone': self.context.get('sales_tone', 'friendly'),
