@@ -42,15 +42,6 @@ export function AgentStudio({
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       setUserId(user.id);
-      
-      try {
-        const res = await fetch(`https://three1labs-backend.onrender.com/api/builder/context/${user.id}`);
-        const data = await res.json();
-        if (data.context && data.context.brandName) {
-          onUpdateAgent(data.context);
-        }
-      } catch (err) {
-      }
     }
   };
   init();
