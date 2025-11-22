@@ -30,20 +30,16 @@ export function AgentStudio({
   onBack,
   onUpdateAgent,
 }) {
+  const [activeTab, setActiveTab] = useState("home");
+  const [editPrompt, setEditPrompt] = useState("");
   const [conversationStep, setConversationStep] = useState(0);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [userId, setUserId] = useState(null);
   
  useEffect(() => {
-  const init = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setUserId(user.id);
-    }
-  };
-  init();
 }, []);
+
   const isEmptyAgent =
     !agentData.brandName &&
     !agentData.heroHeader &&
