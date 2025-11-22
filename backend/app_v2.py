@@ -208,17 +208,19 @@ IMPORTANT: Always extract product name and price. Products format: [{{"name": "X
                     "next_state": self.context['state'],
                     "ai_response": response_text,
                 }
-if result.get('updated_fields'):
-    for key, value in result['updated_fields'].items():
-        if value is not None:
-            if key == 'products' and value:
-                if isinstance(value, list):
-                    existing = self.context.get('products', []) or []
-                    self.context['products'] = existing + value
-                    self.context['product_pills'] = [
-                        {'name': p.get('name', 'Product'), 'image': p.get('image', 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400')}
-                        for p in self.context['products']
-                    ]
+            if result.get('updated_fields'):
+                for key, value in result['updated_fields'].items():
+                    if value is not None:
+                        if key == 'products' and value:
+                            if isinstance(value, list):
+                                existing = self.context.get('products', []) or []
+                                self.context['products'] = existing + value
+                                self.context['product_pills'] = [
+                                    {'name': p.get('name', 'Product'), 'image': p.get('image', 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400')}
+                                    for p in self.context['products']
+                                ]
+                        else:
+                            self.context[key] = value
             else:
                 self.context[key] = value
             
