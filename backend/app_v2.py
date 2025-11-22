@@ -242,7 +242,7 @@ IMPORTANT: Always extract product name and price. Products format: [{{"name": "X
                 'content': result.get('ai_response', ''),
                 'timestamp': datetime.utcnow().isoformat()
             
-            self.save_context()
+            self.save_context()})
             
             return {
                 'success': True,
