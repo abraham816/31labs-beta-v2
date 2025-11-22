@@ -374,6 +374,12 @@ def process_builder():
     
     result = builders[user_id].process_message(message)
     
+    # Update cached context from frontend
+    if data.get("context"):
+        builders[user_id].context["products"] = data["context"].get("products", [])
+        builders[user_id].context["product_pills"] = data["context"].get("productPills", [])
+    
+    
     state_map = {
         'idle': 'START',
         'intake': 'SUBMIT', 
