@@ -167,6 +167,8 @@ Recent conversation:
 Parse user's message and extract business details. Guide them naturally through building.
 Return JSON: {{"updated_fields": {{"brand_name": null, "hero_header": null, "hero_subheader": null, "hero_color": null, "hero_text_size": null, "subheader_color": null, "subheader_text_size": null, "products": null, "sales_tone": null}}, "next_state": "{self.context['state']}", "ai_response": "your response"}}
 
+CRITICAL: "publish" or "publish agent" commands should NOT create products. Just respond ready to publish.
+
 Examples:
 - "I want to sell tea" → Ask about brand name
 - "Call it TeaTime" → Set brand_name: "TeaTime"
@@ -214,14 +216,24 @@ IMPORTANT: Always extract product name and price. Products format: [{{"name": "X
                         if key == 'products' and value:
                             if isinstance(value, list):
                                 existing = self.context.get('products', []) or []
-                                self.context['products'] = existing + value
+                                for new_product in value:
+                                    found = False
+                                    new_name = new_product.get('name', '').lower()
+                                    for i, existing_product in enumerate(existing):
+                                        if existing_product.get('name', '').lower() == new_name:
+                                            existing[i] = new_product
+                                            found = True
+                                            break
+                                    if not found:
+                                        existing.append(new_product)
+                                
+                                self.context['products'] = existing
                                 self.context['product_pills'] = [
                                     {'name': p.get('name', 'Product'), 'image': p.get('image', 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400')}
                                     for p in self.context['products']
                                 ]
                         else:
                             self.context[key] = value
-            
             if result.get('next_state'):
                 self.context['state'] = result['next_state']
             
