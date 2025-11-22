@@ -110,23 +110,22 @@ export function AgentStudio({
 // Update agent data from backend response
 if (data.updates) onUpdateAgent(data.updates);
 if (data.context || data.updated_fields) {
-
   // Build complete updates from backend + existing data
   const updates = {
-    brandName: data.context.brandName || data.context.brand_name || agentData.brandName,
-    heroHeader: data.context.heroHeader || data.context.hero_header || agentData.heroHeader,
-    heroSubheader: data.context.heroSubheader || data.context.hero_subheader || agentData.heroSubheader,
-    heroColor: data.context.heroColor || data.context.hero_color || agentData.heroColor,
-    heroTextSize: data.context.heroTextSize || data.context.hero_text_size || agentData.heroTextSize,
-    heroWeight: data.context.heroWeight || data.context.hero_weight || agentData.heroWeight,
-    subheaderColor: data.context.subheaderColor || data.context.subheader_color || agentData.subheaderColor,
-    subheaderTextSize: data.context.subheaderTextSize || data.context.subheader_text_size || agentData.subheaderTextSize,
-    subheaderWeight: data.context.subheaderWeight || data.context.subheader_weight || agentData.subheaderWeight,
-    products: data.context.products || agentData.products,
-    productPills: data.context.productPills || data.context.product_pills || agentData.productPills,
-    backgroundImage: data.context.backgroundImage || data.context.background_image || agentData.backgroundImage,
-    salesTone: data.context.salesTone || data.context.sales_tone || agentData.salesTone,
-    agentType: data.context.agentType || data.context.agent_type || agentData.agentType
+    brandName: data.context.brandName || data.context.brand_name || agentData.brandName || '',
+    heroHeader: data.context.heroHeader || data.context.hero_header || agentData.heroHeader || '',
+    heroSubheader: data.context.heroSubheader || data.context.hero_subheader || agentData.heroSubheader || '',
+    heroColor: data.context.heroColor || data.context.hero_color || agentData.heroColor || '#171717',
+    heroTextSize: data.context.heroTextSize || data.context.hero_text_size || agentData.heroTextSize || 'text-6xl',
+    heroWeight: data.context.heroWeight || data.context.hero_weight || agentData.heroWeight || 'font-normal',
+    subheaderColor: data.context.subheaderColor || data.context.subheader_color || agentData.subheaderColor || '#525252',
+    subheaderTextSize: data.context.subheaderTextSize || data.context.subheader_text_size || agentData.subheaderTextSize || 'text-xl',
+    subheaderWeight: data.context.subheaderWeight || data.context.subheader_weight || agentData.subheaderWeight || 'font-normal',
+    products: data.context.products || agentData.products || [],
+    productPills: data.context.productPills || data.context.product_pills || agentData.productPills || [],
+    backgroundImage: data.context.backgroundImage || data.context.background_image || agentData.backgroundImage || '',
+    salesTone: data.context.salesTone || data.context.sales_tone || agentData.salesTone || 'friendly',
+    agentType: data.context.agentType || data.context.agent_type || agentData.agentType || 'eCommerce'
   };
   onUpdateAgent(updates);
   
