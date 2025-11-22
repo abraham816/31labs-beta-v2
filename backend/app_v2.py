@@ -207,15 +207,12 @@ IMPORTANT: Always extract product name and price. Products format: [{{"name": "X
             except:
                 result = {
                     "updated_fields": {},
-                    "next_state": self.context['state'],
+                    "next_state": self.context["state"],
+                }
             if result.get("updated_fields"):
                 for key, value in result["updated_fields"].items():
                     if value is not None:
                         self.context[key] = value
-                                ]
-                        else:
-                            self.context[key] = value
-            if result.get('next_state'):
                 self.context['state'] = result['next_state']
             
             self.context['conversation_history'].append({
