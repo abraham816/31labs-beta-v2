@@ -30,6 +30,8 @@ export function AgentStudio({
   onBack,
   onUpdateAgent,
 }) {
+  const [activeTab, setActiveTab] = useState("home");
+  const [editPrompt, setEditPrompt] = useState("");
   const [conversationStep, setConversationStep] = useState(0);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -40,10 +42,20 @@ export function AgentStudio({
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       setUserId(user.id);
+      
+      try {
+        const res = await fetch(`https://three1labs-backend.onrender.com/api/builder/context/${user.id}`);
+        const data = await res.json();
+        if (data.context && data.context.brandName) {
+          onUpdateAgent(data.context);
+        }
+      } catch (err) {
+      }
     }
   };
   init();
 }, []);
+
   const isEmptyAgent =
     !agentData.brandName &&
     !agentData.heroHeader &&
