@@ -122,7 +122,7 @@ if (data.context || data.updated_fields) {
     subheaderColor: data.context.subheaderColor || data.context.subheader_color || agentData.subheaderColor,
     subheaderTextSize: data.context.subheaderTextSize || data.context.subheader_text_size || agentData.subheaderTextSize,
     subheaderWeight: data.context.subheaderWeight || data.context.subheader_weight || agentData.subheaderWeight,
-    products: data.context.products || agentData.products,
+    products: data.context.products ? [...(agentData.products || []), ...data.context.products] : agentData.products,
     productPills: data.context.productPills || data.context.product_pills || agentData.productPills,
     backgroundImage: data.context.backgroundImage || data.context.background_image || agentData.backgroundImage,
     salesTone: data.context.salesTone || data.context.sales_tone || agentData.salesTone,
