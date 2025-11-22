@@ -220,8 +220,6 @@ IMPORTANT: Always extract product name and price. Products format: [{{"name": "X
                                     for p in self.context['products']
                                 ]
                         else:
-                            self.context[key] = value
-            else:
                 self.context[key] = value
             
             if result.get('next_state'):
